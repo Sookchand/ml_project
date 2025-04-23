@@ -19,10 +19,7 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
-            # Get the absolute path to the project root directory
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            
-            # Construct the absolute path to the CSV file
             data_path = os.path.join(project_root, "notebook", "data", "stud.csv")
             
             df = pd.read_csv(data_path)
@@ -48,4 +45,14 @@ class DataIngestion:
         
 if __name__=="__main__":
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_data, test_data = obj.initiate_data_ingestion()
+    
+    # Import transformation and training modules only when needed
+    from src.components.data_transformation import DataTransformation
+    from src.components.model_trainer import ModelTrainer
+    
+    data_transformation = DataTransformation()
+    train_array, test_array, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+    
+    model_trainer = ModelTrainer()
+    print(model_trainer.initiate_model_trainer(train_array, test_array))
