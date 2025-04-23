@@ -47,8 +47,8 @@ def evaluate_models(
             gs = GridSearchCV(model, para, cv=3)
             gs.fit(X_train, y_train)
 
-            model.set_params(**gs.best_params_)
-            model.fit(X_train, y_train)
+            model.set_params(**gs.best_params_) # Update model parameters
+            model.fit(X_train, y_train)  # Train model
 
             y_train_pred = model.predict(X_train)
             y_test_pred = model.predict(X_test)
@@ -59,4 +59,20 @@ def evaluate_models(
         return report
     except Exception as e:
         logging.info('Exception occurred during model training')
+        raise CustomException(e, sys)
+    
+def load_object(file_path: str) -> Any:
+    """
+    Load an object from a file using dill serialization
+    
+    Args:
+        file_path: Path to the file containing the serialized object
+        
+    Returns:
+        The deserialized object
+    """
+    try:
+        with open(file_path, "rb") as file_obj:
+            return dill.load(file_obj)
+    except Exception as e:
         raise CustomException(e, sys)
